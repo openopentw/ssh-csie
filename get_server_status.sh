@@ -1,5 +1,5 @@
 url="https://monitor.csie.ntu.edu.tw/status.html"
-curl -s $url | grep td > ./status_table.html
+status_table=`curl -s $url | grep td`
 
 # normal: 0
 # low:    1
@@ -11,13 +11,13 @@ for ((i = 0; i < 19; i++))
 do
 	machine_id=$(((i+1)*10))
 
-	machine[$i]=`cat ./status_table.html | \
+	machine[$i]=`echo "$status_table" | \
 		head -n $machine_id | tail -n 10 | \
 		grep 'center' | \
 		egrep -o '>.+<' | sed 's/>//' | sed 's/<//' | \
 		cat`
 
-	status=`cat ./status_table.html | \
+	status=`echo "$status_table" | \
 		head -n $machine_id | tail -n 10 | \
 		egrep -o 'class=".+"' | \
 		sed 's/class="//' | sed 's/"//' | \
@@ -34,7 +34,6 @@ do
 		score[$i]=$((score[$i] + status_num))
 	done
 done
-rm -f ./status_table.html
 
 # for ((i = 0; i < 19; i++))
 # do
