@@ -1,6 +1,6 @@
-echo 'Searching for the best workstation ...'
-machines=''
+id=`cat config`
 
+machines=''
 get_server_status(){
 	url="https://monitor.csie.ntu.edu.tw/status.html"
 	status_table=`curl -s $url | grep td`
@@ -110,12 +110,12 @@ get_server_status(){
 	machines=`echo ${machine[$min_1_id]}; echo ${machine[$min_2_id]}; echo ${machine[$min_3_id]}`
 }
 
+echo 'Searching for the best workstation ...'
 get_server_status
-
 echo The best three workstations: $machines
 
 choose=`echo "$machines" | head -n 1`
-cmd="ssh b04902053@$choose.csie.ntu.edu.tw"
+cmd="ssh $id@$choose.csie.ntu.edu.tw"
 echo ""
 echo $cmd
-ssh b04902053@$choose.csie.ntu.edu.tw
+ssh $id@$choose.csie.ntu.edu.tw
