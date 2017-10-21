@@ -5,43 +5,41 @@ get_server_status(){
 	url="https://monitor.csie.ntu.edu.tw/status.html"
 	status_table=`curl -s $url | grep td`
 
-	# normal: 0
-	# low:    1
-	# medium: 3
-	# high:   5
+	# Get machine names.
+	machine=`echo "$status_table" | \
+		grep 'center' | \
+		egrep -o '>.+<' | sed 's/>//' | sed 's/<//' | \
+		cat`
+	readarray machine_arr <<< "$machine"
+
+	# Get machine scores.
+	#   normal: 0
+	#   low:    1
+	#   medium: 3
+	#   high:   5
+	status=`echo "$status_table" | \
+		egrep -o 'class=".+"' | \
+		sed 's/class="//' | sed 's/"//' | \
+		sed 's/normal/0/' | \
+		sed 's/low/1/' | \
+		sed 's/medium/3/' | \
+		sed 's/high/5/' | \
+		cat`
+	readarray status_arr <<< "$status"
 
 	# Calculate score based on different colors on the cell in the table
 	for ((i = 0; i < 19; i++))
 	do
-		machine_id=$(((i+1)*10))
-
-		machine[$i]=`echo "$status_table" | \
-			head -n $machine_id | tail -n 10 | \
-			grep 'center' | \
-			egrep -o '>.+<' | sed 's/>//' | sed 's/<//' | \
-			cat`
-
-		status=`echo "$status_table" | \
-			head -n $machine_id | tail -n 10 | \
-			egrep -o 'class=".+"' | \
-			sed 's/class="//' | sed 's/"//' | \
-			sed 's/normal/0/' | \
-			sed 's/low/1/' | \
-			sed 's/medium/3/' | \
-			sed 's/high/5/' | \
-			cat`
-
 		score[$i]=0
-		for ((j = 1; j < 11; j++))
+		for ((j = i*9; j < (i+1)*9; j++))
 		do
-			status_num=`echo $status | sed 's/ /\n/g' | head -n $j | tail -n 1`
-			score[$i]=$((score[$i] + status_num))
+			score[$i]=$((score[$i] + status_arr[$j]))
 		done
 	done
 
 	# for ((i = 0; i < 19; i++))
 	# do
-	# 	echo ${machine[$i]}: ${score[$i]}
+	# 	echo ${machine_arr[$i]}: ${score[$i]}
 	# done
 
 	# 0 - bsd1
@@ -67,9 +65,9 @@ get_server_status(){
 	beg_id=1
 	end_id=16
 
-	min_1_id=1
-	min_2_id=1
-	min_3_id=1
+	min_1_id=$beg_id
+	min_2_id=$beg_id
+	min_3_id=$beg_id
 
 	# find the minimal workstation
 	for ((i = $beg_id; i < end_id; i++)); do
@@ -104,10 +102,7 @@ get_server_status(){
 		fi
 	done
 
-	# echo ${machine[$min_1_id]}
-	# echo ${machine[$min_2_id]}
-	# echo ${machine[$min_3_id]}
-	machines=`echo ${machine[$min_1_id]}; echo ${machine[$min_2_id]}; echo ${machine[$min_3_id]}`
+	machines=`echo ${machine_arr[$min_1_id]}; echo ${machine_arr[$min_2_id]}; echo ${machine_arr[$min_3_id]}`
 }
 
 echo 'Searching for the best workstation ...'
