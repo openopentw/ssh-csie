@@ -4,23 +4,33 @@ The script helps students in NTU CSIE connect to workstations.
 
 It will detect which machine on workstation is better, and then `ssh` to that machine.
 
-## Installation
+## Installation & Configuration
 
 - Download this repository.
 
-- Specify your account name (usually student ID) in the `config` file.
+- Add execution permission to `ssh-csie.sh` .
 
   ```shell
-  echo bxx902xxx > config
+  chmod u+x ssh-csie.sh
   ```
+
+- Specify your account name (usually student ID) at file `~/.ssh-csie-config` .
+
+  ```shell
+  echo bxx902xxx > ~/.ssh-csie-config
+  ```
+
+- Now you have done installation and configuration!
 
 ## Usage
 
 - Just simply run the script.
 
   ```shell
-  bash ./ssh-csie.sh
+  ssh-csie.sh
   ```
+
+- Also, you can add the script to the path, so that you can run it wherever you are.
 
 
 ## TODOs
@@ -42,7 +52,7 @@ It will detect which machine on workstation is better, and then `ssh` to that ma
   | orange | medium  | 3     |
   | red    | high    | 5     |
 
-- Finally, the script chooses the machine that has the smallest `score` to connect to.
+- Finally, the script chooses the machine that has the lowest `score` to connect to.
 
 > This is just a simple algorithm to determine which machine is better.
 > Therefore if you have any better ideas, you can tell me or just fork this repository.

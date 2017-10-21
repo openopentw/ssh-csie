@@ -1,4 +1,4 @@
-id=`cat config`
+id=`cat ~/.ssh-csie-config`
 
 machines=''
 get_server_status(){
