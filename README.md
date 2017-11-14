@@ -1,17 +1,43 @@
 # ssh-csie
 
-The script helps students in NTU CSIE connect to workstations.
+The script helps students in NTU CSIE `ssh` or `sftp` to workstations.
 
-It will detect which machine on workstation is better, and then `ssh` to that machine.
+It will detect which machine on workstation is better, and then `ssh` or `sftp` to that machine.
+
+## Usage
+
+- Just simply run the script, and then it will detect the best workstations and then `ssh` or `sftp` to it.
+
+  ```shell
+  ssh-csie.sh
+  ```
+
+  or
+
+  ```shell
+  sftp-csie.sh
+  ```
+
+- Or, you can specify which machine you want to `ssh` or `sftp` to. For example,
+
+  ```shell
+  ssh-csie.sh 12		# this command is equivalent to the next command
+  ssh-csie.sh linux12	# ssh bxx902xxx@linux12.csie.ntu.edu.tw
+  sftp-csie.sh bsd1	# sftp bxx902xxx@bsd1.csie.ntu.edu.tw
+  sftp-csie.sh oasis2	# sftp bxx902xxx@oasis2.csie.ntu.edu.tw
+  ```
+
+- Besides, you can add the script to the path, so that you can conveniently run it wherever you are.
 
 ## Installation & Configuration
 
 - Download this repository.
 
-- Add execution permission to `ssh-csie.sh` .
+- Add execution permission to `ssh-csie.sh` and `sftp-csie.sh`.
 
   ```shell
   chmod u+x ssh-csie.sh
+  chmod u+x sftp-csie.sh
   ```
 
 - Specify your account name (usually student ID) at file `~/.ssh-csie-config` .
@@ -19,24 +45,14 @@ It will detect which machine on workstation is better, and then `ssh` to that ma
   ```shell
   echo bxx902xxx > ~/.ssh-csie-config
   ```
+  (both `ssh-csie` and `sftp-csie` read configurations from this file.)
 
 - Now you have done installation and configuration!
-
-## Usage
-
-- Just simply run the script.
-
-  ```shell
-  ssh-csie.sh
-  ```
-
-- Also, you can add the script to the path, so that you can run it wherever you are.
-
 
 ## TODOs
 
 - [x] Let people can manually specify which workstation they want to connect to.
-- [ ] Add a `sftp` version.
+- [x] Add a `sftp` version.
 
 ## How does this script determine which workstation is better?
 
