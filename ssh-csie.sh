@@ -1,15 +1,15 @@
-id=`cat ~/.ssh-csie-config`
+id=$(cat ~/.ssh-csie-config)
 
 machines=''
 get_server_status(){
 	url="https://monitor.csie.ntu.edu.tw/status.html"
-	status_table=`curl -s $url | grep td`
+	status_table=$(curl -s $url | grep td)
 
 	# Get machine names.
-	machine=`echo "$status_table" | \
+	machine=$(echo "$status_table" | \
 		grep 'center' | \
 		egrep -o '>.+<' | sed 's/>//' | sed 's/<//' | \
-		cat`
+		cat)
 	readarray machine_arr <<< "$machine"
 
 	# Get machine scores.
@@ -17,14 +17,14 @@ get_server_status(){
 	#   low:    1
 	#   medium: 3
 	#   high:   5
-	status=`echo "$status_table" | \
+	status=$(echo "$status_table" | \
 		egrep -o 'class=".+"' | \
 		sed 's/class="//' | sed 's/"//' | \
 		sed 's/normal/0/' | \
 		sed 's/low/1/' | \
 		sed 's/medium/3/' | \
 		sed 's/high/5/' | \
-		cat`
+		cat)
 	readarray status_arr <<< "$status"
 
 	# Calculate score based on different colors on the cell in the table
@@ -78,7 +78,7 @@ get_server_status(){
 
 	# find the 2nd minimal workstation
 	if [ "$min_1_id" -eq "$beg_id" ]; then
-		min_2_id=1
+		min_2_id=$(($beg_id+1))
 	fi
 	for ((i = $beg_id; i < end_id; i++)); do
 		if [ "$i" -eq "$min_1_id" ]; then
@@ -91,7 +91,7 @@ get_server_status(){
 
 	# find the 3rd minimal workstation
 	if [ "$min_1_id" -lt "$(($beg_id+2))" ] || [ "$min_2_id" -lt "$(($beg_id+2))" ]; then
-		min_2_id=2
+		min_2_id=$(($beg_id+2))
 	fi
 	for ((i = $beg_id; i < end_id; i++)); do
 		if [ "$i" -eq "$min_1_id" ] || [ "$i" -eq "$min_2_id" ]; then
@@ -102,15 +102,30 @@ get_server_status(){
 		fi
 	done
 
-	machines=`echo ${machine_arr[$min_1_id]}; echo ${machine_arr[$min_2_id]}; echo ${machine_arr[$min_3_id]}`
+	machines=$(echo ${machine_arr[$min_1_id]}; echo ${machine_arr[$min_2_id]}; echo ${machine_arr[$min_3_id]})
 }
 
-echo 'Searching for the best workstation ...'
-get_server_status
-echo The best three workstations: $machines
+cmd=''
+if [[ $# -eq 1 ]]; then
+	# specific workstation
+	first_letter=$(echo $1 | cut -c 1)
+	if [ $first_letter == 'b' ] || [ $first_letter == 'o' ] || [ $first_letter == 'l' ]; then
+		# specific bsd or oasis or linux
+		cmd="ssh $id@$1.csie.ntu.edu.tw"
+	else
+		# linux
+		cmd="ssh $id@linux$1.csie.ntu.edu.tw"
+	fi
+else
+	# auto search for the best workstation
+	echo 'Searching for the best workstation ...'
+	get_server_status
 
-choose=`echo "$machines" | head -n 1`
-cmd="ssh $id@$choose.csie.ntu.edu.tw"
+	echo The best three workstations: $machines
+	choose=$(echo "$machines" | head -n 1)
+	cmd="ssh $id@$choose.csie.ntu.edu.tw"
+fi
+
 echo ""
 echo $cmd
-ssh $id@$choose.csie.ntu.edu.tw
+$cmd

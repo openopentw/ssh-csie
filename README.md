@@ -35,7 +35,7 @@ It will detect which machine on workstation is better, and then `ssh` to that ma
 
 ## TODOs
 
-- [ ] Let people can manually specify which workstation they want to connect to.
+- [x] Let people can manually specify which workstation they want to connect to.
 - [ ] Add a `sftp` version.
 
 ## How does this script determine which workstation is better?
