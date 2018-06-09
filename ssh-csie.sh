@@ -1,3 +1,5 @@
+#!/bin/bash
+
 id=$(cat ~/.ssh-csie-config)
 
 machines=''
@@ -10,7 +12,10 @@ get_server_status(){
 		grep 'center' | \
 		egrep -o '>.+<' | sed 's/>//' | sed 's/<//' | \
 		cat)
-	readarray machine_arr <<< "$machine"
+	# readarray machine_arr <<< "$machine"
+	while IFS=\= read mach; do
+		machine_arr+=($mach)
+	done <<< "$machine"
 
 	# Get machine scores.
 	#   normal: 0
@@ -25,7 +30,10 @@ get_server_status(){
 		sed 's/medium/3/' | \
 		sed 's/high/5/' | \
 		cat)
-	readarray status_arr <<< "$status"
+	# readarray status_arr <<< "$status"
+	while IFS=\= read stat; do
+		status_arr+=($stat)
+	done <<< "$status"
 
 	# Calculate score based on different colors on the cell in the table
 	for ((i = 0; i < 19; i++))

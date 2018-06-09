@@ -4,6 +4,9 @@ The script helps students in NTU CSIE `ssh` or `sftp` to workstations.
 
 It will detect which machine on workstation is better, and then `ssh` or `sftp` to that machine.
 
+> ssh-csie now support macOS !!
+> (Since macOS does not support `readarray` method, I use `IFS` instead)
+
 ## Usage
 
 - Just simply run the script, and then it will detect the best workstations and then `ssh` or `sftp` to it.
@@ -48,11 +51,6 @@ It will detect which machine on workstation is better, and then `ssh` or `sftp` 
   (both `ssh-csie` and `sftp-csie` read configurations from this file.)
 
 - Now you have done installation and configuration!
-
-## TODOs
-
-- [x] Let people can manually specify which workstation they want to connect to.
-- [x] Add a `sftp` version.
 
 ## How does this script determine which workstation is better?
 
